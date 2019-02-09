@@ -1,9 +1,9 @@
 kind: StorageClass
-apiVersion: storage.k8s.io/v1beta1
+apiVersion: storage.k8s.io/v1
 metadata:
- name: slow
+  name: ssd
 provisioner: kubernetes.io/azure-disk
 parameters:
- skuName: Standard_LRS
- location: LOCATN
-
+  skuName: Premium_LRS
+  location: LOCATN
+  fsType: xfs

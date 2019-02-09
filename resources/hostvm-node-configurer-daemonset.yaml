@@ -1,19 +1,23 @@
 kind: DaemonSet
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 metadata:
   name: hostvm-configurer
   labels:
     app: startup-script
 spec:
+  selector:
+    matchLabels:
+      name: startup-script
   template:
     metadata:
       labels:
-        app: startup-script
+        name: startup-script
     spec:
       hostPID: true
       containers:
       - name: hostvm-configurer-container
         image: gcr.io/google-containers/startup-script:v1
+        imagePullPolicy: Always
         securityContext:
           privileged: true
         env:

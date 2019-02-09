@@ -49,8 +49,8 @@ spec:
           #image: pkdone/mongo-ent:3.4
           image: mongo
           command:
-            - "numactl"
-            - "--interleave=all"
+            # - "numactl"
+            # - "--interleave=all"
             - "mongod"
             - "--wiredTigerCacheSizeGB"
             - "0.25"
@@ -81,7 +81,7 @@ spec:
   - metadata:
       name: mongodb-persistent-storage-claim
       annotations:
-        volume.beta.kubernetes.io/storage-class: "slow"
+        storageClassName: "ssd"
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:

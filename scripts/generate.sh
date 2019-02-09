@@ -1,10 +1,10 @@
 #!/bin/sh
 ##
-# Script to deploy a Kubernetes project with a StatefulSet running a MongoDB Replica Set, to Azure ACS.
+# Script to deploy a Kubernetes project with a StatefulSet running a MongoDB Replica Set, to Azure AKS.
 ##
 
 # Set the location to deploy to - run the following to see list of available locations: $ az account list-locations
-LOCATN=uksouth
+LOCATN=eastasia
 
 # Create an Azure resource group (to hold collection of related assets)
 echo "Creating Azure group"
@@ -12,13 +12,13 @@ az group create --name MongoResourceGroup --location $LOCATN
 
 # Create a new Azure Kubernetes cluster with one Linux master node and just
 # one Linux agent node (to keep under free account quote maximum of 4 cores),
-echo "Creating ACS Kubernetes orchestrator"
-az acs create --orchestrator-type kubernetes --resource-group MongoResourceGroup --name MongoK8sCluster --agent-count 1 --generate-ssh-keys 
+echo "Creating AKS orchestrator"
+az aks create --resource-group MongoResourceGroup --name MongoK8sCluster --generate-ssh-keys 
 echo "Sleeping for 90 seconds before attempting to get credentials"
 sleep 90
 
 # Configure kubectl credentials to connect to the new Kubernetes cluster
-az acs kubernetes get-credentials --resource-group MongoResourceGroup --name MongoK8sCluster
+az aks get-credentials --resource-group MongoResourceGroup --name MongoK8sCluster --overwrite-existing
 sleep 2
 
 # Configure host VM using daemonset to disable hugepages
