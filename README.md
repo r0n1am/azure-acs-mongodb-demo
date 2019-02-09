@@ -59,8 +59,7 @@ Use this section to prove:
 
 Connect to the container running the first "mongod" replica, then use the Mongo Shell to authenticate and add some test data to a database:
 
-    $ kubectl exec -it mongod-0 -c mongod-container bash
-    $ mongo
+    $ kubectl exec -it mongod-0 -c mongod-container mongo
     > db.getSiblingDB('admin').auth("main_admin", "abc123");
     > use test;
     > db.testcoll.insert({a:1});
@@ -69,8 +68,7 @@ Connect to the container running the first "mongod" replica, then use the Mongo 
     
 Exit out of the shell and exit out of the first container (“mongod-0”). Then connect to the second container (“mongod-1”), run the Mongo Shell again and see if the previously inserted data is visible to the second "mongod" replica:
 
-    $ kubectl exec -it mongod-1 -c mongod-container bash
-    $ mongo
+    $ kubectl exec -it mongod-1 -c mongod-container mongo
     > db.getSiblingDB('admin').auth("main_admin", "abc123");
     > use test;
     > db.setSlaveOk(1);
@@ -88,8 +86,7 @@ To see if Persistent Volume Claims really are working, run a script to drop the 
     
 As before, keep re-running the last command above, until you can see that all 3 “mongod” pods and their containers have been successfully started again. Then connect to the first container, run the Mongo Shell and query to see if the data we’d inserted into the old containerised replica-set is still present in the re-instantiated replica set:
 
-    $ kubectl exec -it mongod-0 -c mongod-container bash
-    $ mongo
+    $ kubectl exec -it mongod-0 -c mongod-container mongo
     > db.getSiblingDB('admin').auth("main_admin", "abc123");
     > use test;
     > db.testcoll.find();
@@ -123,5 +120,5 @@ It is also worth checking in the [Microsoft Azure Dashboard](https://portal.azur
 
 ### 2.2 Factors To Be Potentially Addressed In The Future By This Project
 
-* Leveraging XFS filesystem for data file storage to improve performance. _The ability for dynamically provisioned PersistentVolumes to define the "fstype" field, to declare that "XFS" should be used, is [not scheduled to be supported until Kubernetes version 1.8](https://github.com/kubernetes/kubernetes/pull/45345). An alternative approach would be to first create provider specific storage disks based on XFS directly, and then explicitly declare PersistentVolumes based on this storage. However, for Azure/AKS, currently [Virtual Hard Drive (VHD) Blobs](https://docs.microsoft.com/en-us/azure/virtual-machines/scripts/virtual-machines-linux-cli-sample-create-vm-vhd) must be created for this, which requires generating and uploading, from the client, large blog images (eg. 3 x 10GB images) as part of the deployment process. For demo purposes, this is way too cumbersome and time-consuming. As a result this project does not cater for ensuring that the underlying storage for Mongod containers, is XFS based._
+* ~~Leveraging XFS filesystem for data file storage to improve performance. _The ability for dynamically provisioned PersistentVolumes to define the "fstype" field, to declare that "XFS" should be used, is [not scheduled to be supported until Kubernetes version 1.8](https://github.com/kubernetes/kubernetes/pull/45345). An alternative approach would be to first create provider specific storage disks based on XFS directly, and then explicitly declare PersistentVolumes based on this storage. However, for Azure/AKS, currently [Virtual Hard Drive (VHD) Blobs](https://docs.microsoft.com/en-us/azure/virtual-machines/scripts/virtual-machines-linux-cli-sample-create-vm-vhd) must be created for this, which requires generating and uploading, from the client, large blog images (eg. 3 x 10GB images) as part of the deployment process. For demo purposes, this is way too cumbersome and time-consuming. As a result this project does not cater for ensuring that the underlying storage for Mongod containers, is XFS based._~~ Should be addressed.
 
