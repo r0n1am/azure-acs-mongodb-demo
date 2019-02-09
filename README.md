@@ -1,6 +1,6 @@
-# MongoDB Deployment Demo for Kubernetes on Azure ACS
+# MongoDB Deployment Demo for Kubernetes on Azure AKS
 
-An example project demonstrating the deployment of a MongoDB Replica Set via Kubernetes on Azure Container Services (ACS). Contains example Kubernetes YAML resource files (in the 'resource' folder) and associated Kubernetes based Bash scripts (in the 'scripts' folder) to configure the environment and deploy a MongoDB Replica Set.
+An example project demonstrating the deployment of a MongoDB Replica Set via Kubernetes on Azure Container Services (AKS). Contains example Kubernetes YAML resource files (in the 'resource' folder) and associated Kubernetes based Bash scripts (in the 'scripts' folder) to configure the environment and deploy a MongoDB Replica Set.
 
 For further background information on what these scripts and resource files do, plus general information about running MongoDB with Kubernetes, see: [http://k8smongodb.net/](http://k8smongodb.net/)
 
@@ -72,8 +72,8 @@ Exit out of the shell and exit out of the first container (“mongod-0”). Then
     $ kubectl exec -it mongod-1 -c mongod-container bash
     $ mongo
     > db.getSiblingDB('admin').auth("main_admin", "abc123");
-    > db.setSlaveOk(1);
     > use test;
+    > db.setSlaveOk(1);
     > db.testcoll.find();
     
 You should see that the two records inserted via the first replica, are visible to the second replica.
@@ -100,7 +100,7 @@ You should see that the two records inserted earlier, are still present.
 
 **Important:** This step is required to ensure you aren't continuously charged by Microsoft Azure for an environment you no longer need.
 
-Run the following script to undeploy the MongoDB Service & StatefulSet plus related Kubernetes resources, followed by the removal of the ACS Kubernetes cluster.
+Run the following script to undeploy the MongoDB Service & StatefulSet plus related Kubernetes resources, followed by the removal of the AKS Kubernetes cluster.
 
     $ ./teardown.sh
     
@@ -111,7 +111,7 @@ It is also worth checking in the [Microsoft Azure Dashboard](https://portal.azur
 
 ### 2.1 Factors Addressed By This Project
 
-* Deployment of a MongoDB on ACS's Kubernetes platform
+* Deployment of a MongoDB on AKS's Kubernetes platform
 * Use of Kubernetes StatefulSets and PersistentVolumeClaims to ensure data is not lost when containers are recycled
 * Proper configuration of a MongoDB Replica Set for full resiliency
 * Securing MongoDB by default for new deployments
@@ -123,5 +123,5 @@ It is also worth checking in the [Microsoft Azure Dashboard](https://portal.azur
 
 ### 2.2 Factors To Be Potentially Addressed In The Future By This Project
 
-* Leveraging XFS filesystem for data file storage to improve performance. _The ability for dynamically provisioned PersistentVolumes to define the "fstype" field, to declare that "XFS" should be used, is [not scheduled to be supported until Kubernetes version 1.8](https://github.com/kubernetes/kubernetes/pull/45345). An alternative approach would be to first create provider specific storage disks based on XFS directly, and then explicitly declare PersistentVolumes based on this storage. However, for Azure/ACS, currently [Virtual Hard Drive (VHD) Blobs](https://docs.microsoft.com/en-us/azure/virtual-machines/scripts/virtual-machines-linux-cli-sample-create-vm-vhd) must be created for this, which requires generating and uploading, from the client, large blog images (eg. 3 x 10GB images) as part of the deployment process. For demo purposes, this is way too cumbersome and time-consuming. As a result this project does not cater for ensuring that the underlying storage for Mongod containers, is XFS based._
+* Leveraging XFS filesystem for data file storage to improve performance. _The ability for dynamically provisioned PersistentVolumes to define the "fstype" field, to declare that "XFS" should be used, is [not scheduled to be supported until Kubernetes version 1.8](https://github.com/kubernetes/kubernetes/pull/45345). An alternative approach would be to first create provider specific storage disks based on XFS directly, and then explicitly declare PersistentVolumes based on this storage. However, for Azure/AKS, currently [Virtual Hard Drive (VHD) Blobs](https://docs.microsoft.com/en-us/azure/virtual-machines/scripts/virtual-machines-linux-cli-sample-create-vm-vhd) must be created for this, which requires generating and uploading, from the client, large blog images (eg. 3 x 10GB images) as part of the deployment process. For demo purposes, this is way too cumbersome and time-consuming. As a result this project does not cater for ensuring that the underlying storage for Mongod containers, is XFS based._
 
